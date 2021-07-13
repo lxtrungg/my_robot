@@ -957,16 +957,12 @@
         <pose frame="">2.405124 3.025708 2.525191 0 -0 -1.565582</pose>
 	</model>
 
-
-
-
-
-       <model name="RetailShopWall_01_001">
+    <model name="RetailShopWall_01_001">
         <include>
             <uri>model://aws_robomaker_retail_RetailShopWall_01</uri>
         </include>
         <pose frame="">0 0 -0.281282 0 -0 0</pose>
-	</model>
+    </model>
 
 	<model name="LightA_01_001">
         <include>
