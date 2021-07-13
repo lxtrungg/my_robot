@@ -19,9 +19,11 @@
 
   <exec_depend>gazebo_ros</exec_depend>
   <exec_depend>gazebo</exec_depend>
-  <exec_depend>gazebo_plugins</exec_depend>
-
+  <exec_depend>gazebo_plugins</exec_depend>  
+  
   <export>
-    <gazebo_ros plugin_path="${prefix}/lib" gazebo_media_path="${prefix}" gazebo_model_path="${prefix}/models"/>
+    <gazebo_ros gazebo_media_path="${prefix}"/>
+    <gazebo_ros gazebo_model_path="${prefix}/models"/>
   </export>
+
 </package>
