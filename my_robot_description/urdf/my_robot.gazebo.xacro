@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <gazebo>
+        <plugin name="gazebo_ros_control" filename="libgazebo_ros_control.so">
+            <robotNamespace>my_robot</robotNamespace>
+            <legacyModeNS>true</legacyModeNS>
+        </plugin>
+    </gazebo>
+    
+    <gazebo reference="base_link">
+        <material>Gazebo/SkyBlue</material>
+    </gazebo>
+
+    <gazebo reference="base_scan">
+        <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <xacro:macro name="gazebo_wheel" params="name">
+        <gazebo reference="wheel_${name}_link">
+            <material>Gazebo/Black</material>
+        </gazebo>
+    </xacro:macro>
+
+</robot>

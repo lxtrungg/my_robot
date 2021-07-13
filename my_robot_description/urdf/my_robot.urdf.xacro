@@ -1,0 +1,130 @@
+<?xml version="1.0"?>
+<robot name="my_robot" xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:property name="PI" value="3.1415926535897931"/>
+    <xacro:property name="body_length" value="0.465"/>
+    <xacro:property name="body_width" value="0.43"/>
+    <xacro:property name="body_height" value="0.1"/>
+    <xacro:property name="body_mass" value="20"/>
+    
+    <xacro:property name="wheel_radius" value="0.075"/>
+    <xacro:property name="wheel_width" value="0.04"/>
+    <xacro:property name="wheel_mass" value="0.4"/>
+
+    <xacro:property name="support_length" value="0.03"/>
+    <xacro:property name="support_width" value="0.03"/>
+    <xacro:property name="support_height" value="0.15"/>
+    
+    <xacro:property name="top_length" value="0.38"/>
+    <xacro:property name="top_width" value="0.26"/>
+    <xacro:property name="top_height" value="0.005"/>
+    
+    <xacro:include filename="$(find my_robot_description)/urdf/macros.xacro"/>
+    <xacro:include filename="$(find my_robot_description)/urdf/materials.xacro"/>
+    <xacro:include filename="$(find my_robot_description)/urdf/my_robot.gazebo.xacro"/>
+    
+    <link name="base_footprint"/>
+
+    <joint name="base_joint" type="fixed">
+        <parent link="base_footprint"/>
+        <child link="base_link"/>
+        <origin xyz="0.0 0.0 0.025" rpy="0.0 0.0 0.0"/>
+    </joint>
+
+    <!-- Chassis -->
+    <link name="base_link">
+        <inertial>
+            <origin xyz="0 0 ${body_height/2}" rpy="0 0 0"/>
+            <mass value="${body_mass}"/>
+            <xacro:box_inertia m="${body_mass}" l="${body_length}" w="${body_width}" h="${body_height}"/>
+        </inertial>
+        <xacro:chassis name="body" length="${body_length}" width="${body_width}" height="${body_height}">
+            <origin xyz="0 0 ${body_height/2}" rpy="0 0 0"/>
+            <material name="stainless"/>
+        </xacro:chassis>
+
+        <collision>
+            <origin xyz="0 0 ${body_height/2}" rpy="0 0 0"/>
+            <geometry>
+                <box size="${body_length} ${body_width} ${body_height}"/>
+            </geometry>
+        </collision>
+
+        <xacro:chassis name="support1" length="${support_length}" width="${support_width}" height="${support_height}">
+            <origin xyz="0.184 0.098 0.175" rpy="0.0 0.0 0.0"/>
+            <material name="aluminium"/>
+        </xacro:chassis>
+        
+        <xacro:chassis name="support2" length="${support_length}" width="${support_width}" height="${support_height}">
+            <origin xyz="-0.109 0.098 0.175" rpy="0.0 0.0 0.0"/>
+            <material name="aluminium"/>
+        </xacro:chassis>
+        
+        <xacro:chassis name="support3" length="${support_length}" width="${support_width}" height="${support_height}">
+            <origin xyz="0.184 -0.098 0.175" rpy="0.0 0.0 0.0"/>
+            <material name="aluminium"/>
+        </xacro:chassis>
+        
+        <xacro:chassis name="support4" length="${support_length}" width="${support_width}" height="${support_height}">
+            <origin xyz="-0.109 -0.098 0.175" rpy="0.0 0.0 0.0"/>
+            <material name="aluminium"/>
+        </xacro:chassis>
+        
+        <xacro:chassis name="top" length="${top_length}" width="${top_width}" height="${top_height}">
+            <origin xyz="0.0425 0.0 0.2525" rpy="0.0 0.0 0.0"/>
+            <material name="blue"/>
+        </xacro:chassis>
+    </link>
+    <!-- End Chassis -->
+
+    <!-- Wheel -->
+    <xacro:wheel name="front_left" radius="${wheel_radius}" width="${wheel_width}">
+        <origin xyz="0.1225 0.165 ${body_height/2}" rpy="0 0 0"/>
+    </xacro:wheel>
+
+    <xacro:wheel name="rear_left" radius="${wheel_radius}" width="${wheel_width}">
+        <origin xyz="-0.1225 0.165  ${body_height/2}" rpy="0 0 0"/>
+    </xacro:wheel>
+
+    <xacro:wheel name="front_right" radius="${wheel_radius}" width="${wheel_width}">
+        <origin xyz="0.1225 -0.165 ${body_height/2}" rpy="0 0 0"/>
+    </xacro:wheel>
+
+    <xacro:wheel name="rear_right" radius="${wheel_radius}" width="${wheel_width}">
+        <origin xyz="-0.1225 -0.165 ${body_height/2}" rpy="0 0 0"/>
+    </xacro:wheel>
+    <!-- End Wheel -->
+
+    <!-- Lidar -->
+    <link name="base_scan">
+        <inertial>
+            <origin xyz="-0.035 0.035 -0.04" rpy="${PI/2} 0.0 0.0"/>
+            <mass value="0.114" />
+            <inertia ixx="0.001" ixy="0.0" ixz="0.0" iyy="0.001" iyz="0.0" izz="0.001" />
+        </inertial>
+
+        <visual>
+            <origin xyz="-0.035 0.035 -0.04" rpy="${PI/2} 0.0 0.0"/>
+            <geometry>
+                <mesh filename="package://my_robot_description/meshes/rplidar.STL" scale="0.001 0.001 0.001"/>
+            </geometry>
+            <material name="grey"/>
+        </visual>
+
+        <collision>
+            <origin xyz="-0.035 0.035 -0.04" rpy="${PI/2} 0.0 0.0"/>
+            <geometry>
+                <mesh filename="package://my_robot_description/meshes/rplidar.STL" scale="0.001 0.001 0.001"/>
+            </geometry>
+        </collision>
+
+    </link>
+    
+    <joint name="scan_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="base_scan"/>
+        <origin xyz="0.13 0.0 0.29" rpy="0.0 0.0 0.0"/>
+    </joint>
+    <!-- End Lidar -->
+
+</robot>
