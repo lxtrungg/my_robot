@@ -29,7 +29,7 @@
         </visual>
     </xacro:macro>
 
-    <xacro:macro name="wheel" params="name radius width *origin">
+    <xacro:macro name="wheel" params="name *origin">
         <link name="wheel_${name}_link">
             <inertial>
                 <origin xyz="0.0 0.0 0.0" rpy="${PI/2} 0.0 0.0"/>
@@ -40,7 +40,7 @@
             <visual>
                 <origin xyz="0.0 0.0 0.0" rpy="${PI/2} 0.0 0.0"/>
                 <geometry>
-                    <cylinder radius="${radius}" length="${width}"/>
+                    <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
                 </geometry>
                 <material name="black"/>
             </visual>
@@ -48,7 +48,7 @@
             <collision>
                 <origin xyz="0.0 0.0 0.0" rpy="${PI/2} 0.0 0.0"/>
                 <geometry>
-                    <cylinder radius="${radius}" length="${width}"/>
+                    <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
                 </geometry>
             </collision>
         </link>
@@ -60,7 +60,7 @@
             <xacro:insert_block name="origin"/>
         </joint>
 
-        <xacro:gazebo_wheel name="${name}"/>
+        <xacro:wheel_transmission name="${name}"/>
     </xacro:macro>
 
 </robot>
