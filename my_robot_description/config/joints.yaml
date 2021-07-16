@@ -1,3 +1,0 @@
-controller_joint_names: ['', 'front_left', 'rear_left', 'front_right', 'rear_right', 'scan']
-type: "joint_state_controller/JointStateController"
-publish_rate: 50

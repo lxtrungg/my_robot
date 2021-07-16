@@ -13,8 +13,8 @@
 
     <xacro:macro name="wheel_transmission" params="name">
         <gazebo reference="wheel_${name}_link">
-            <mu1 value="1.0"/>
-            <mu2 value="1.0"/>
+            <mu1 value="200.0"/>
+            <mu2 value="100.0"/>
             <kp value="10000000.0"/>
             <kd value="1.0"/>
             <fdir1 value="0.2"/>
