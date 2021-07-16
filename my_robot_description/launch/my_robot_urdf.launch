@@ -2,7 +2,7 @@
 <launch>
 
     <arg name="model" default="$(find xacro)/xacro --inorder '$(find my_robot_description)/urdf/my_robot.urdf.xacro'"/>
-    <param name="robot_description" command="$(arg model)" />
+    <param name="robot_description" command="$(arg model)"/>
     <arg name="rvizconfig" default="$(find my_robot_description)/rviz/config.rviz"/>
         
     <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>

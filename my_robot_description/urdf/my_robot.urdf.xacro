@@ -10,6 +10,8 @@
     <xacro:property name="wheel_radius" value="0.075"/>
     <xacro:property name="wheel_width" value="0.04"/>
     <xacro:property name="wheel_mass" value="0.4"/>
+    <xacro:property name="wheel_separation" value="0.33"/>
+    
 
     <xacro:property name="support_length" value="0.03"/>
     <xacro:property name="support_width" value="0.03"/>
@@ -19,12 +21,14 @@
     <xacro:property name="top_width" value="0.26"/>
     <xacro:property name="top_height" value="0.005"/>
     
+    <xacro:property name="use_gazebo_simulation" value="${True}"/>
+    
     <xacro:include filename="$(find my_robot_description)/urdf/macros.xacro"/>
     <xacro:include filename="$(find my_robot_description)/urdf/materials.xacro"/>
     <xacro:include filename="$(find my_robot_description)/urdf/my_robot.gazebo.xacro"/>
     
     <link name="base_footprint"/>
-
+    
     <joint name="base_joint" type="fixed">
         <parent link="base_footprint"/>
         <child link="base_link"/>
@@ -78,19 +82,19 @@
     <!-- End Chassis -->
 
     <!-- Wheel -->
-    <xacro:wheel name="front_left" radius="${wheel_radius}" width="${wheel_width}">
+    <xacro:wheel name="front_left">
         <origin xyz="0.1225 0.165 ${body_height/2}" rpy="0 0 0"/>
     </xacro:wheel>
 
-    <xacro:wheel name="rear_left" radius="${wheel_radius}" width="${wheel_width}">
+    <xacro:wheel name="rear_left">
         <origin xyz="-0.1225 0.165  ${body_height/2}" rpy="0 0 0"/>
     </xacro:wheel>
 
-    <xacro:wheel name="front_right" radius="${wheel_radius}" width="${wheel_width}">
+    <xacro:wheel name="front_right">
         <origin xyz="0.1225 -0.165 ${body_height/2}" rpy="0 0 0"/>
     </xacro:wheel>
 
-    <xacro:wheel name="rear_right" radius="${wheel_radius}" width="${wheel_width}">
+    <xacro:wheel name="rear_right">
         <origin xyz="-0.1225 -0.165 ${body_height/2}" rpy="0 0 0"/>
     </xacro:wheel>
     <!-- End Wheel -->
@@ -117,7 +121,6 @@
                 <mesh filename="package://my_robot_description/meshes/rplidar.STL" scale="0.001 0.001 0.001"/>
             </geometry>
         </collision>
-
     </link>
     
     <joint name="scan_joint" type="fixed">
@@ -127,4 +130,13 @@
     </joint>
     <!-- End Lidar -->
 
+    <!-- Imu -->
+    <link name="imu_link"/>
+    
+    <joint name="imu_joint" type="fixed">
+        <parent link="base_link"/>
+        <child link="imu_link"/>
+        <origin xyz="0.0 0.0 0.12" rpy="0.0 0.0 0.0"/>
+    </joint>
+    
 </robot>
