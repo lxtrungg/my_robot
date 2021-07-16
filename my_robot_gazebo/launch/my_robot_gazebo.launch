@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <launch>
 
-    <arg name="gui" default="true"/>
+    <arg name="gui" default="true"/>z
     <include file="$(find gazebo_ros)/launch/empty_world.launch">
         <arg name="world_name" value="$(find my_robot_gazebo)/world/my_world.world"/>
         <arg name="paused" value="false"/>
@@ -11,13 +11,26 @@
         <arg name="debug" value="false"/>
         <arg name="verbose" value="false"/>
     </include>
-
-    <arg name="model" default="$(find xacro)/xacro --inorder '$(find my_robot_description)/urdf/my_robot.urdf.xacro'"/>
+    
     <arg name="x_pos" default="0.0"/>
     <arg name="y_pos" default="0.0"/>
     <arg name="z_pos" default="0.0"/>
-    <param name="robot_description" command="$(arg model)"/>
+    <arg name="model" default="$(find xacro)/xacro --inorder '$(find my_robot_description)/urdf/my_robot.urdf.xacro'"/>
+    <param name="/my_robot/robot_description" command="$(arg model)"/>
 
-    <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model" args="-urdf -model my_robot -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+    <arg name="rvizconfig" default="$(find my_robot_description)/rviz/config.rviz"/>
+
+    <!-- <rosparam command="load" file="$(find my_robot_description)/config/diff_drive.yaml"/>
+    <rosparam command="load" file="$(find my_robot_description)/config/joint_state.yaml"/>
+    <rosparam command="load" file="$(find my_robot_description)/config/pid_gains.yaml"/> -->
+    
+    <group ns="my_robot">
+        
+        <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"
+            args="-urdf -model my_robot -x $(arg x_pos) -y $(arg y_pos) -z $(arg z_pos) -param robot_description" />
+        <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher"/>
+        <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>
+    </group>
 
 </launch>
