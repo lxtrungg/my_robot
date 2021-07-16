@@ -1,0 +1,27 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>my_robot_gazebo</name>
+  <version>0.0.0</version>
+  <description>The my_robot_gazebo package</description>
+  <maintainer email="lxtrungg@gmail.com">lxtrungg</maintainer>
+  <license>BSD</license>
+  <author email="lxtrungg@gmail.com">Le Xuan Trung</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>gazebo_ros</build_depend>
+  <build_depend>gazebo</build_depend>
+  <build_depend>gazebo_plugins</build_depend>
+
+  <build_export_depend>gazebo_ros</build_export_depend>
+  <build_export_depend>gazebo</build_export_depend>
+  <build_export_depend>gazebo_plugins</build_export_depend>
+
+  <exec_depend>gazebo_ros</exec_depend>
+  <exec_depend>gazebo</exec_depend>
+  <exec_depend>gazebo_plugins</exec_depend>
+
+  <export>
+    <gazebo_ros gazebo_media_path="${prefix}" gazebo_model_path="${prefix}/models"/>
+  </export>
+</package>
