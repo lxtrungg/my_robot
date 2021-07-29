@@ -1,0 +1,6 @@
+<?xml version="1.0"?>
+<launch>
+
+    <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/>
+
+</launch>

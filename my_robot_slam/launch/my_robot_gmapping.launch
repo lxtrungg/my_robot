@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_gazebo" default="true"/>
+    <arg name="rvizconfig" default="$(find my_robot_slam)/rviz/config.rviz"/>   
+    <include file="$(find my_robot_gazebo)/launch/my_robot_gazebo.launch" if="$(arg use_gazebo)">
+        <arg name="rvizconfig" value="$(arg rvizconfig)"/>
+    </include>
+    <include file="$(find my_robot_description)/launch/my_robot_urdf.launch" unless="$(arg use_gazebo)">
+        <arg name="rvizconfig" value="$(arg rvizconfig)"/>
+    </include>
+        
+    <group ns="my_robot">
+        <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/>
+        <node name="slam_gmapping" pkg="gmapping" type="slam_gmapping" output="screen">
+            <rosparam command="load" file="$(find my_robot_slam)/config/gmapping_params.yaml"/>
+        </node>
+    </group>
+</launch>

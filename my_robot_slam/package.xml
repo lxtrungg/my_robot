@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<package format="2">
+  <name>my_robot_slam</name>
+  <version>0.0.0</version>
+  <description>The my_robot_slam package</description>
+  <maintainer email="lxtrungg@gmail.com">lxtrungg</maintainer>
+  <license>BSB</license>
+  <author email="lxtrungg@gmail.com">Le Xuan Trung</author>
+
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>

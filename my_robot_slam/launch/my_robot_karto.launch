@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<launch>
+    <arg name="use_gazebo" default="true"/>
+    <arg name="world_name" default="bookstore"/>
+    
+    <arg name="rvizconfig" default="$(find my_robot_slam)/rviz/config.rviz"/>   
+    <include file="$(find my_robot_gazebo)/launch/my_robot_gazebo.launch" if="$(arg use_gazebo)">
+        <arg name="rvizconfig" value="$(arg rvizconfig)"/>
+        <arg name="world_name" value="$(arg world_name)"/>
+    </include>
+    <include file="$(find my_robot_description)/launch/my_robot_urdf.launch" unless="$(arg use_gazebo)">
+        <arg name="rvizconfig" value="$(arg rvizconfig)"/>
+    </include>
+        
+    <group ns="my_robot">
+        <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/>
+        <node name="slam_karto" pkg="slam_karto" type="slam_karto" output="screen">
+            <rosparam command="load" file="$(find my_robot_slam)/config/karto_params.yaml"/>
+        </node>
+    </group>
+</launch>

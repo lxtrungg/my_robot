@@ -17,6 +17,6 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-install(DIRECTORY launch models routes world
-  DESTI
-  
+install(DIRECTORY launch models fule_models worlds
+  DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+)
