@@ -2,11 +2,20 @@
 <sdf version="1.6">
   <world name="default">
     <!-- override the default position of the camera -->
-    <gui>
+    <!-- <gui>
       <camera name='gzclient_camera'>
         <pose>-5.73 3.76 8.10 0 1.1316 -0.4398</pose>
       </camera>
+    </gui> -->
+    
+
+    <gui fullscreen='0'>
+      <camera name='user_camera'>
+        <pose>0.8 0.0 12.0 0 1.5708 0</pose>
+        <view_controller>orbit</view_controller>
+      </camera>
     </gui>
+    
     <gravity>0 0 -9.8</gravity>
     <magnetic_field>6e-06 2.3e-05 -4.2e-05</magnetic_field>
     <atmosphere type="adiabatic" />
@@ -30,6 +39,50 @@
       <heading_deg>0</heading_deg>
     </spherical_coordinates>
 
+    <!-- UWB Simulation -->
+    <!-- <model name="uwb_anchor0">
+      <pose>0 0 2.5 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    
+    <model name="uwb_anchor1">
+      <pose>3 -3 2.5 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    
+    <model name="uwb_anchor2">
+      <pose>-8 -8 2.5 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model> -->
 
 	<model name="AirConditionerC_01_001">
         <include>

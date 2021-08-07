@@ -3,28 +3,24 @@
     <arg name="use_gazebo" default="true"/>
     <arg name="rvizconfig" default="$(find my_robot_navigation)/rviz/config.rviz"/>   
     <arg name="world_name" default="bookstore"/>
-    <arg name="build_map" default="false"/>
+    <arg name="use_amcl" default="true"/>
+    <arg name="map_file" default="$(find my_robot_slam)/maps/$(arg world_name).yaml" if="$(arg use_amcl)"/>
     
     <include file="$(find my_robot_gazebo)/launch/my_robot_gazebo.launch" if="$(arg use_gazebo)">
         <arg name="rvizconfig" value="$(arg rvizconfig)"/>
         <arg name="world_name" value="$(arg world_name)"/>
     </include>
+
     <include file="$(find my_robot_description)/launch/my_robot_urdf.launch" unless="$(arg use_gazebo)">
         <arg name="rvizconfig" value="$(arg rvizconfig)"/>
     </include>
     
-    <arg name="map_file" default="$(find my_robot_slam)/maps/$(arg world_name).yaml" unless="$(arg build_map)"/>
-
+    <!-- <include file="$(find my_robot_control)/launch/uwb_anchors_set.launch"/> -->
+    
     <group ns="my_robot">
         <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/>
         
-        <group if="$(arg build_map)">
-            <node name="slam_karto" pkg="slam_karto" type="slam_karto" output="screen">
-                <rosparam command="load" file="$(find my_robot_slam)/config/karto_params.yaml"/>
-            </node>
-        </group>
-        
-        <group unless="$(arg build_map)">
+        <group if="$(arg use_amcl)">
             <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
             
             <include file="$(find my_robot_navigation)/launch/amcl.launch">
@@ -32,7 +28,12 @@
             </include>
         </group>
 
-        <include file="$(find my_robot_navigation)/launch/move_base.launch"/>
+        <group unless="$(arg use_amcl)">
+            <node name="slam_karto" pkg="slam_karto" type="slam_karto" output="screen">
+                <rosparam command="load" file="$(find my_robot_slam)/config/karto_params.yaml"/>
+            </node>
+        </group>
         
+        <include file="$(find my_robot_navigation)/launch/move_base.launch"/>
     </group>
 </launch>

@@ -5,11 +5,14 @@
     <arg name="rvizconfig" default="$(find my_robot_description)/rviz/config.rviz"/>   
 
     <group ns="my_robot">
-        <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher"/>
-            <param name="rate" value="50"/>
-        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+        <node name="joint_state_publisher" pkg="joint_state_publisher" type="joint_state_publisher">
             <param name="rate" value="50"/>
         </node>
+
+        <node name="robot_state_publisher" pkg="robot_state_publisher" type="robot_state_publisher">
+            <param name="publish_frequency" value="50"/>
+        </node>
+        
         <node name="rviz" pkg="rviz" type="rviz" args="-d $(arg rvizconfig)" required="true"/>
         </group> 
 </launch>
