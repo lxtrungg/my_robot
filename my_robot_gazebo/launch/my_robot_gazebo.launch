@@ -13,7 +13,8 @@
 
     <arg name="pos" default="-x 0.0 -y 0.0 -z 0.0 -Y 0.0" if="$(eval world_name == 'bookstore')"/>
     <arg name="pos" default="-x 0.0 -y 10.0 -z 0.0 -Y -1.57079632679" if="$(eval world_name == 'hospital')"/>
-    <arg name="pos" default="-x -12.0 -y -18.0 -z 0.0 -Y 0.0" if="$(eval world_name == 'willow_garage')"/>
+    <arg name="pos" default="-x 1.0 -y 14.0 -z 0.0 -Y -1.57079632679" if="$(eval world_name == 'willow_garage')"/>
+    <arg name="pos" default="-x 4.0 -y 4.0 -z 0.0 -Y -1.57079632679" if="$(eval world_name == 'debug')"/>
 
     <group ns="my_robot">
         <node name="urdf_spawner" pkg="gazebo_ros" type="spawn_model"

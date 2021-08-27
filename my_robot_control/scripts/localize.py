@@ -2,17 +2,15 @@
 
 import rospy
 from my_robot_control.msg import  uwb_data
-from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Point
 
 import tf
 import time
 import math
 
 import numpy as np
-import matplotlib.pyplot as plt 
 import math
 from scipy.linalg import eigvals
-import re
 
 all_distance = []
 all_destination_id = []
@@ -22,7 +20,7 @@ sensor_pos = []
 
 
 rospy.init_node('localization_data_node', anonymous=True)
-pub = rospy.Publisher('/my_robot/localization_data_topic', Pose, queue_size=10)
+pub = rospy.Publisher('/my_robot/localization_data_topic', Point, queue_size=10)
 
 
 def subscribe_data(uwb_data_cell):
@@ -34,15 +32,10 @@ def subscribe_data(uwb_data_cell):
 
 
 def publish_data(pose_x,pose_y):
-    robot_pos = Pose()
-    robot_pos.position.x = float(pose_x)
-    robot_pos.position.y = float(pose_y)
-    robot_pos.position.z = 0.0
-
-    robot_pos.orientation.x = 0.0
-    robot_pos.orientation.x = 0.0
-    robot_pos.orientation.x = 0.0
-    robot_pos.orientation.w = 0.0
+    robot_pos = Point()
+    robot_pos.x = float(pose_x)
+    robot_pos.y = float(pose_y)
+    robot_pos.z = 0.0
     pub.publish(robot_pos)
 
     

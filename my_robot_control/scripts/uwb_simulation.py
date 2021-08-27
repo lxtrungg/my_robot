@@ -32,7 +32,8 @@ def get_anchors_pos():
     sensor_pos = []   
     uwb_id = 'uwb_anchor_'
     listener = tf.TransformListener()
-    while len(sensor_pos) != 8:
+    index = 4 if MODELSTATE_INDEX == 6 else 8
+    while len(sensor_pos) != index:
         for i in range(max_anchor):
             try:
                 time.sleep(0.3)
@@ -48,7 +49,7 @@ def get_anchors_pos():
 def calculate_distance(uwb_pose):
     #pose comes in gazebo/model_states (real position)
     global robot_pose_x,robot_pose_y,robot_pose_z
-    robot_pose = [robot_pose_x,robot_pose_y,robot_pose_z]
+    robot_pose = [robot_pose_x, robot_pose_y, robot_pose_z]
 
     #describe 2 points
     p1 = np.array(uwb_pose)
@@ -57,14 +58,13 @@ def calculate_distance(uwb_pose):
     #difference between robot and uwb distance
     uwb_dist = np.sum((p1-p2)**2, axis=0)
     #add noise 
-    uwb_dist=uwb_dist+np.random.normal(0, uwb_dist*0.01, 1)  
+    # uwb_dist=uwb_dist+np.random.normal(0, uwb_dist*0.01, 1)  
     return np.sqrt(uwb_dist)
 
 
 def uwb_simulate(sensor_pos):
-
+    rate = rospy.Rate(50)
     while not rospy.is_shutdown():
-        time.sleep(0.1)
         all_distance = [] 
         all_destination_id = []
 
@@ -78,13 +78,16 @@ def uwb_simulate(sensor_pos):
         all_destination_id.append(0x6910)
         all_destination_id.append(0x6920)
         all_destination_id.append(0x6930)
-        all_destination_id.append(0x6940)
-        all_destination_id.append(0x6950)
-        all_destination_id.append(0x6960)
-        all_destination_id.append(0x6970)
+        if MODELSTATE_INDEX != 6:
+            all_destination_id.append(0x6940)
+            all_destination_id.append(0x6950)
+            all_destination_id.append(0x6960)
+            all_destination_id.append(0x6970)
             
         #publish data with ROS             
-        publish_data(all_destination_id , all_distance)    
+        publish_data(all_destination_id , all_distance)  
+
+        rate.sleep()  
 
 
 def publish_data(all_destination_id, all_distance):
@@ -103,7 +106,7 @@ def subscribe_data(ModelStates):
     counter = counter +1 
 
     #gazebo/modelstate topic frequency is 100 hz. We descrese 10 hz with log method 
-    if counter %100 ==  0:  
+    if counter%100 ==  0:  
         counter = 0 
 
         #ModelStates.pose[2] = turtlebot3 model real position on modelstates   
@@ -114,10 +117,11 @@ def subscribe_data(ModelStates):
 
 if __name__ == "__main__":
     #get uwb anchors postion
+    
+    MODELSTATE_INDEX = rospy.get_param('~modelstate_index', 6)
     sensor_pos = []
     sensor_pos = get_anchors_pos()
 
-    MODELSTATE_INDEX = rospy.get_param('~modelstate_index', 139)
     rospy.loginfo("%s is %s", rospy.resolve_name('~modelstate_index'), MODELSTATE_INDEX)
 
 

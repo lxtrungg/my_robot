@@ -2,12 +2,10 @@
 import rospy 
 
 import numpy as np
-import scipy.stats 
 
 from nav_msgs.msg import Odometry
-from geometry_msgs.msg import PointStamped
-from my_robot_control.msg import  uwb_data
-import math
+from geometry_msgs.msg import Point
+from my_robot_control.msg import uwb_data
 
 import tf 
 import time
@@ -21,8 +19,11 @@ sigma = np.array([[1.0, 0.0, 0.0],[0.0, 1.0, 0.0],[0.0, 0.0, 1.0]])
 sensor_pos=[]
 
 rospy.init_node('kalman_filter_localization', anonymous=True)
-pub_ = rospy.Publisher('/my_robot/localization_data_topic', PointStamped, queue_size=10)
-r = rospy.Rate(1)
+pub_ = rospy.Publisher('/my_robot/localization_data_topic', Point, queue_size=10)
+
+MODELSTATE_INDEX = rospy.get_param('~modelstate_index', 6)
+
+r = rospy.Rate(50)
 
 
 def prediction_step(Odometry):
@@ -39,7 +40,7 @@ def prediction_step(Odometry):
     y = mu[1]
     theta = mu[2]
 
-    delta_vel = Odometry.twist.twist.linear.x *1000           # redefine r1                  odom=>twist=>linear=>x 
+    delta_vel = Odometry.twist.twist.linear.x * 1000           # redefine r1                  odom=>twist=>linear=>x 
     delta_w = Odometry.twist.twist.angular.z                  # redefine t                   odom=>twist=>angular=>z
     
     noise = 0.1**2
@@ -67,8 +68,8 @@ def prediction_step(Odometry):
     mu = [x_new, y_new, theta_new]
     sigma = np.dot(np.dot(G, sigma), np.transpose(G)) + np.dot(np.dot(B, sigma_u), np.transpose(B))
     #publish data every odom step 
-    mu_meter = np.divide(mu, 1000)
-    publish_data(mu_meter[0],mu_meter[1])
+    # mu_meter = np.divide(mu, 1000)
+    # publish_data(mu_meter[0],mu_meter[1])
     
     return mu,sigma
 
@@ -112,13 +113,15 @@ def correction_step(uwb_data,  sensor_pos):
         Z.append(ranges[i])
         expected_ranges.append(range_exp)
     # noise covariance for the measurements
-    R = 0.5 * np.eye(len(ids))
+    R = 0.1 * np.eye(len(ids))
     # Kalman gain
     K_help = np.linalg.inv(np.dot(np.dot(H, sigma), np.transpose(H)) + R)
     K = np.dot(np.dot(sigma, np.transpose(H)), K_help)
     # Kalman correction of mean and covariance
     mu = mu + np.dot(K, (np.array(Z) - np.array(expected_ranges)))
     sigma = np.dot(np.eye(len(sigma)) - np.dot(K, H), sigma)
+    mu_meter = np.divide(mu, 1000)
+    publish_data(mu_meter[0],mu_meter[1])
 
     return mu,sigma
 
@@ -128,25 +131,25 @@ def subscribe_odom_data(Odometry):
     
 
 def subscribe_uwb_data(uwb_data):
-    [mu,sigma]=correction_step(uwb_data,  sensor_pos)
+    [mu,sigma]=correction_step(uwb_data, sensor_pos)
 
 
 def publish_data(pose_x,pose_y):
-    robot_pos_ = PointStamped()
-    robot_pos_.point.x = float(pose_x)
-    robot_pos_.point.y = float(pose_y)
-    robot_pos_.point.z = 0
+    robot_pos_ = Point()
+    robot_pos_.x = float(pose_x)
+    robot_pos_.y = float(pose_y)
+    robot_pos_.z = 0
 
-    robot_pos_.header.stamp = rospy.Time.now() 
-    robot_pos_.header.frame_id = "map" 
     pub_.publish(robot_pos_)
 
 def get_anchors_pos():
     max_anchor = 100
-    sensor_pos = []   
+    sensor_pos = []
     uwb_id = 'uwb_anchor_'
     listener = tf.TransformListener()
-    while len(sensor_pos) != 8:
+    index = 0
+    index = 4 if MODELSTATE_INDEX == 6 else 8
+    while len(sensor_pos) != index:
         for i in range(max_anchor):
             try:
                 time.sleep(0.3)
@@ -164,7 +167,7 @@ if __name__ == "__main__":
     #get uwb anchors postion
     sensor_pos = get_anchors_pos()
     
-    rospy.Subscriber("/my_robot/odom", Odometry, subscribe_odom_data)
+    rospy.Subscriber("/my_robot/odom_gazebo", Odometry, subscribe_odom_data)
     rospy.Subscriber("/my_robot/uwb_data_topic", uwb_data, subscribe_uwb_data)
 
     rospy.spin()

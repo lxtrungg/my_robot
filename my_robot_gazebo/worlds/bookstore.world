@@ -40,8 +40,8 @@
     </spherical_coordinates>
 
     <!-- UWB Simulation -->
-    <!-- <model name="uwb_anchor0">
-      <pose>0 0 2.5 0 0 0</pose>
+    <model name="uwb_anchor0">
+      <pose>7.15 2.2 0.0 0 0 0</pose>
       <static>1</static>
       <link name="link">
         <visual name="visual">
@@ -53,10 +53,9 @@
         </visual>
       </link>
     </model>
-
     
     <model name="uwb_anchor1">
-      <pose>3 -3 2.5 0 0 0</pose>
+      <pose>7.15 -6.8 0.0 0 0 0</pose>
       <static>1</static>
       <link name="link">
         <visual name="visual">
@@ -71,7 +70,7 @@
 
     
     <model name="uwb_anchor2">
-      <pose>-8 -8 2.5 0 0 0</pose>
+      <pose>0.0 -6.8 0.0 0 0 0</pose>
       <static>1</static>
       <link name="link">
         <visual name="visual">
@@ -82,7 +81,77 @@
           </geometry>
         </visual>
       </link>
-    </model> -->
+    </model>
+
+    <model name="uwb_anchor3">
+      <pose>-7.65 -6.6 0.0.0 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="uwb_anchor4">
+      <pose>-7.65 0.0 0.0 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="uwb_anchor5">
+      <pose>-7.65 7.0 0.0 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="uwb_anchor6">
+      <pose>2.15 7.0 0.0 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
+
+    <model name="uwb_anchor7">
+      <pose>2.3 2.2 0.0.0 0 0 0</pose>
+      <static>1</static>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>0.2 0.2 0.2</size>
+            </box>
+          </geometry>
+        </visual>
+      </link>
+    </model>
 
 	<model name="AirConditionerC_01_001">
         <include>

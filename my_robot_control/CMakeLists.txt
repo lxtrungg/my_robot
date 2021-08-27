@@ -127,6 +127,7 @@ catkin_install_python(PROGRAMS
   scripts/teleop.py
   scripts/odometry.py
   scripts/uwb_simulation.py
+  scripts/ekf_localization.py
   scripts/localize.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
 )

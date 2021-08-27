@@ -15,11 +15,24 @@
         <arg name="rvizconfig" value="$(arg rvizconfig)"/>
     </include>
     
-    <!-- <include file="$(find my_robot_control)/launch/uwb_anchors_set.launch"/> -->
+    <include file="$(find my_robot_control)/launch/uwb_anchors_set.launch">
+        <arg name="world_name" value="$(arg world_name)"/>
+    </include>
     
     <group ns="my_robot">
-        <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/>
+        <!-- <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/> -->
         
+        <node name="imu_filter_madgwick" pkg="imu_filter_madgwick" type="imu_filter_node" output="screen">
+            <param name="world_frame" value="enu" if="$(eval world_name=='bookstore')"/>
+            <param name="world_frame" value="nwu" if="$(eval world_name=='debug')"/>
+            <param name="fixed_frame" value="base_link"/>
+            <param name="use_mag" value="false"/>
+            <param name="use_magnetic_field_msg" value="false"/>
+            <param name="publish_tf" value="false"/>
+            <param name="publish_debug_topics" value="true"/>
+        </node>
+        
+
         <group if="$(arg use_amcl)">
             <node name="map_server" pkg="map_server" type="map_server" args="$(arg map_file)"/>
             

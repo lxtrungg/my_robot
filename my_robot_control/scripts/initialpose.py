@@ -7,7 +7,7 @@ from std_msgs.msg import String
 from geometry_msgs.msg import PoseWithCovarianceStamped
 from my_robot_control.msg import  uwb_data
 from sensor_msgs.msg import LaserScan
-from geometry_msgs.msg import PointStamped
+from geometry_msgs.msg import Point
 from nav_msgs.msg import OccupancyGrid
 
 from threading import Timer
@@ -85,7 +85,7 @@ def start_initializing():
         if i>99 : 
             x = ((counter_map % map_width) * map_resolution) + map_origin[0]
             y = ((counter_map / map_width) * map_resolution) + map_origin[1]
-            if abs(x -(robot_realtime_pose.point.x)) <  map_max_radius  and abs(y - (robot_realtime_pose.point.y)) < map_max_radius:
+            if abs(x -(robot_realtime_pose.x)) <  map_max_radius  and abs(y - (robot_realtime_pose.y)) < map_max_radius:
                 processed_map.append([x,y])
     
     for i in range(0,360):
@@ -96,9 +96,9 @@ def start_initializing():
             processed_lidar.append([lidar_ranges.ranges[i] * degree_lidar_c  , lidar_ranges.ranges[i] * degree_lidar_s ]) 
     
     #find lidar and map data coverage ratio of maximum degree
-    final_degree = map_matcher.main(processed_lidar,processed_map,robot_realtime_pose.point.x,robot_realtime_pose.point.y)
+    final_degree = map_matcher.main(processed_lidar,processed_map,robot_realtime_pose.x,robot_realtime_pose.y)
     #set the initial pose and direction 
-    setInitialPosition(robot_realtime_pose.point.x,robot_realtime_pose.point.y,math.radians(final_degree))
+    setInitialPosition(robot_realtime_pose.x,robot_realtime_pose.y,math.radians(final_degree))
     
      
 def subscribe_lidar(LaserScan):
@@ -118,7 +118,7 @@ if __name__ == "__main__":
     rospy.init_node('initialpose_lidar_uwb', anonymous=True)
     sub_map = rospy.Subscriber("/my_robot/map",OccupancyGrid, subscribe_map)                  #get map data
     sub_scan = rospy.Subscriber("/my_robot/scan", LaserScan, subscribe_lidar)                 #get lidar data
-    sub_local = rospy.Subscriber("/my_robot/localization_data_topic", PointStamped, subscribe_uwb)    #get robot position
+    sub_local = rospy.Subscriber("/my_robot/localization_data_topic", Point, subscribe_uwb)    #get robot position
 
     time.sleep(1)
     control_ready = 0

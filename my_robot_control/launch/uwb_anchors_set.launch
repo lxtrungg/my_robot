@@ -1,15 +1,29 @@
 <launch>
-
+    <arg name="world_name" default="bookstore"/>
     <group ns="my_robot">
-    
-        <node name="uwb_anchor_0x6e00" pkg="tf" type="static_transform_publisher" args="7.15 2.2 0.0 0 0 0 1 map uwb_anchor_0 100"/>
-        <node name="uwb_anchor_0x6e10" pkg="tf" type="static_transform_publisher" args="7.15 -6.8 0.0 0 0 0 1 map uwb_anchor_1 100"/>
-        <node name="uwb_anchor_0x6e20" pkg="tf" type="static_transform_publisher" args="0.0 -6.8 0.0 0 0 0 1 map uwb_anchor_2 100"/>   
-        <node name="uwb_anchor_0x6e30" pkg="tf" type="static_transform_publisher" args="-7.65 -6.6 0.0.0 0 0 0 1 map uwb_anchor_3 100"/>
-        <node name="uwb_anchor_0x6e40" pkg="tf" type="static_transform_publisher" args="-7.65 0.0 0.0 0 0 0 1 map uwb_anchor_4 100"/>
-        <node name="uwb_anchor_0x6e50" pkg="tf" type="static_transform_publisher" args="-7.65 7.0 0.0 0 0 0 1 map uwb_anchor_5 100"/>
-        <node name="uwb_anchor_0x6e60" pkg="tf" type="static_transform_publisher" args="2.15 7.0 0.0 0 0 0 1 map uwb_anchor_6 100"/>   
-        <node name="uwb_anchor_0x6e70" pkg="tf" type="static_transform_publisher" args="2.3 2.2 0.0.0 0 0 0 1 map uwb_anchor_7 100"/>
+        <!-- bookstore -->
+        <group if="$(eval world_name == 'bookstore')">
+            <node name="uwb_anchor_0x6e00" pkg="tf" type="static_transform_publisher" args="7.15 2.2 0.0 0 0 0 1 map uwb_anchor_0 100"/>
+            <node name="uwb_anchor_0x6e10" pkg="tf" type="static_transform_publisher" args="7.15 -6.8 0.0 0 0 0 1 map uwb_anchor_1 100"/>
+            <node name="uwb_anchor_0x6e20" pkg="tf" type="static_transform_publisher" args="0.0 -6.8 0.0 0 0 0 1 map uwb_anchor_2 100"/>   
+            <node name="uwb_anchor_0x6e30" pkg="tf" type="static_transform_publisher" args="-7.65 -6.6 0.0.0 0 0 0 1 map uwb_anchor_3 100"/>
+            <node name="uwb_anchor_0x6e40" pkg="tf" type="static_transform_publisher" args="-7.65 0.0 0.0 0 0 0 1 map uwb_anchor_4 100"/>
+            <node name="uwb_anchor_0x6e50" pkg="tf" type="static_transform_publisher" args="-7.65 7.0 0.0 0 0 0 1 map uwb_anchor_5 100"/>
+            <node name="uwb_anchor_0x6e60" pkg="tf" type="static_transform_publisher" args="2.15 7.0 0.0 0 0 0 1 map uwb_anchor_6 100"/>   
+            <node name="uwb_anchor_0x6e70" pkg="tf" type="static_transform_publisher" args="2.3 2.2 0.0.0 0 0 0 1 map uwb_anchor_7 100"/>
+        </group>
+
+        <!-- debug -->
+        <group if="$(eval world_name == 'debug')">
+            <node name="uwb_anchor_0x6e00" pkg="tf" type="static_transform_publisher" args="4.8 4.8 0 0 0 1 map uwb_anchor_0 100"/>
+            <node name="uwb_anchor_0x6e10" pkg="tf" type="static_transform_publisher" args="4.8 -4.8 0 0 0 1 map uwb_anchor_1 100"/>
+            <node name="uwb_anchor_0x6e20" pkg="tf" type="static_transform_publisher" args="-4.8 -4.8 0.0 0 0 0 1 map uwb_anchor_2 100"/>   
+            <node name="uwb_anchor_0x6e30" pkg="tf" type="static_transform_publisher" args="-4.8  4.8 0 0 0 1 map uwb_anchor_3 100"/>
+            <!-- <node name="uwb_anchor_0x6e40" pkg="tf" type="static_transform_publisher" args="-12.5 2.2 0.0 0 0 0 1 map uwb_anchor_4 100"/>
+            <node name="uwb_anchor_0x6e50" pkg="tf" type="static_transform_publisher" args="-12.5 9.3 0.0 0 0 0 1 map uwb_anchor_5 100"/>
+            <node name="uwb_anchor_0x6e60" pkg="tf" type="static_transform_publisher" args="-12.5 16.7 0.0 0 0 0 1 map uwb_anchor_6 100"/>   
+            <node name="uwb_anchor_0x6e70" pkg="tf" type="static_transform_publisher" args="-4.5 16.7 0.0.0 0 0 0 1 map uwb_anchor_7 100"/> -->
+        </group>
 
         <!-- <node name="dwm1001" pkg="my_robot_control" type="localize.py" output="screen">
             <param name="serial_port" value="/dev/ttyUSB0"/>
@@ -18,11 +32,16 @@
             <param name="req_anchor" value="10"/>
             <param name="frame_id" value="tag_link"/>
         </node> -->
-        
-        <!-- <node name="uwb_simulation" pkg="my_robot_control" type="uwb_simulation.py"  output="screen">
-            <param name="modelstate_index" value="139"/>
-        </node> -->
+    
     </group>
     
-    
+    <node name="uwb_simulation" pkg="my_robot_control" type="uwb_simulation.py" output="screen">
+        <param name="modelstate_index" value="147" if="$(eval world_name == 'bookstore')"/>
+        <param name="modelstate_index" value="6" if="$(eval world_name == 'debug')"/>
+    </node>
+
+    <node name="uwb_localization" pkg="my_robot_control" type="ekf_localization.py" output="screen">
+        <param name="modelstate_index" value="147" if="$(eval world_name == 'bookstore')"/>
+        <param name="modelstate_index" value="6" if="$(eval world_name == 'debug')"/>
+    </node>
 </launch>
