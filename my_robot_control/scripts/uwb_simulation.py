@@ -63,7 +63,7 @@ def calculate_distance(uwb_pose):
 
 
 def uwb_simulate(sensor_pos):
-    rate = rospy.Rate(50)
+    rate = rospy.Rate(20)
     while not rospy.is_shutdown():
         all_distance = [] 
         all_destination_id = []
@@ -104,7 +104,6 @@ def subscribe_data(ModelStates):
     global robot_pose_x,robot_pose_y,robot_pose_z
     global counter
     counter = counter +1 
-
     #gazebo/modelstate topic frequency is 100 hz. We descrese 10 hz with log method 
     if counter%100 ==  0:  
         counter = 0 

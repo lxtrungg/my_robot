@@ -71,7 +71,7 @@ def main():
     publish_thread = PublishThread()
 
     linear_speed = 0.5
-    angular_speed = 2.2
+    angular_speed = 1.0
     linear_vel = 0.0
     angular_vel  = 0.0
     try:

@@ -27,8 +27,8 @@
 
         <group if="$(eval world_name == 'debug')">
             <param name="initial_pose_a" value="-1.57079632679"/>
-            <param name="initial_pose_x" value="4.0"/>
-            <param name="initial_pose_y" value="4.0"/>
+            <param name="initial_pose_x" value="4.3"/>
+            <param name="initial_pose_y" value="0"/>
         </group>
     </group>
 
