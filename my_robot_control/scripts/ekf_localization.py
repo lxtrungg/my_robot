@@ -100,8 +100,6 @@ def correction_step(uwb_data,  sensor_pos):
     Z = []
     expected_ranges = []
     for i in range(len(ids)):
-        lm_id = ids[i]
-        meas_range = ranges[i]
         lx = sensor_pos[i][0]
         ly = sensor_pos[i][1]
         lz = sensor_pos[i][2]
@@ -165,6 +163,8 @@ def get_anchors_pos():
 
 if __name__ == "__main__":
     #get uwb anchors postion
+    MODELSTATE_INDEX = rospy.get_param('~modelstate_index', 6)
+    
     sensor_pos = get_anchors_pos()
     
     rospy.Subscriber("/my_robot/odom_gazebo", Odometry, subscribe_odom_data)

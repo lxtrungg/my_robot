@@ -20,7 +20,7 @@
     </include>
     
     <group ns="my_robot">
-        <!-- <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/> -->
+        <node name="odom_pub" pkg="my_robot_control" type="odometry.py"/>
         
         <node name="imu_filter_madgwick" pkg="imu_filter_madgwick" type="imu_filter_node" output="screen">
             <param name="world_frame" value="enu" if="$(eval world_name=='bookstore')"/>

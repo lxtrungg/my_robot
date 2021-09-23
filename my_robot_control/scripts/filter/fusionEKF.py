@@ -5,6 +5,8 @@ from sympy import symbols, Matrix, sin, cos, atan2
 
 class FusionEKF(object):
     def __init__(self, dim_x, dim_z):
+        self.dim_x = dim_x
+        self.dim_z = dim_z
         self.x = np.zeros((dim_x, 1))
         self.P = np.eye(dim_x)
         self.F = np.eye(dim_x)
@@ -24,9 +26,12 @@ class FusionEKF(object):
         self.F = self.fxu.jacobian(state)
         self.W = self.fxu.jacobian(control)
         
-        # self.hx = Matrix([[x], [y], [theta]])
-        # self.hx = Matrix([[x], [y]])
-        self.hx = Matrix([[theta]])
+        if dim_z == 1:
+            self.hx = Matrix([[theta]])
+        elif dim_z == 2:
+            self.hx = Matrix([[x], [y]])
+        else:
+            self.hx = Matrix([[x], [y], [theta]])
         self.H = self.hx.jacobian(state)
         self.subs = {x:0, y:0, theta:0, v:0, w:0, t:0}
         self.x_x = x
@@ -61,7 +66,6 @@ class FusionEKF(object):
         #update step
         hx = np.array(self.hx.evalf(subs=self.subs)).astype(float)
         y = self.residual(z, hx)
-        # y = z - hx
         PHT = P @ H.T
         self.S = H @ PHT + R
         SI = np.linalg.inv(self.S)
@@ -78,11 +82,14 @@ class FusionEKF(object):
 
     def residual(self, a, b):
         y = a - b
-        # y[2, 0] = y[2, 0] % (2*np.pi)
-        # if y[2, 0] > np.pi:
-        #     y[2, 0] -= 2 * np.pi
-        y = y % (2*np.pi)
-        if y > np.pi:
-            y -= 2 * np.pi
-            
+        if self.dim_z == 1:
+            y = self.normallize_angle(y)
+        elif self.dim_z == 3:
+            y[2, 0] = self.normallize_angle(y[2, 0])
         return y
+
+    def normallize_angle(self, x):
+        x %= (2*np.pi)
+        if x > np.pi:
+            x -= 2 * np.pi
+        return x

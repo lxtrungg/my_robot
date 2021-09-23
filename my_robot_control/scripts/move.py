@@ -113,9 +113,9 @@ def main():
                 cnt += 1
             else:
                 cnt = 0
-                # step = move_rec(step)
+                step = move_rec(step)
                 # step = move_num(step)
-                step = move_circle()
+                # step = move_circle()
                 
                 if step == 10:
                     debug_pub.publish(Bool(True))

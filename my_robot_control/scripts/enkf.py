@@ -8,8 +8,9 @@ from gazebo_msgs.srv import GetModelState, GetModelStateRequest
 from nav_msgs.msg import Odometry
 import tf
 import numpy as np
+from numpy.random import multivariate_normal
 from numpy import sin, cos, deg2rad
-from filter.fusionEKF import FusionEKF
+from filter.fusionEnKF import FusionEnKF
 
 pose = {'x': 0.0, 'y': 0.0, 'yaw': 0.0}
 vel = {'v': 0.0, 'w': 0.0}
@@ -59,21 +60,21 @@ def subscriber_uwb_callback(uwb_data):
         if not imu_done:
             return
         first_scan = True
-        ekf.x = np.array([[uwb_data.x], [uwb_data.y], [imu_data_yaw]])
+        enkf.x = np.array([uwb_data.x, uwb_data.y, imu_data_yaw])
+        enkf.sigmas = multivariate_normal(mean=enkf.x, cov=enkf.P, size=N)
         return
 
     if dim_z == 1:
         z = np.array([imu_data_yaw])
     elif dim_z == 2:
-        z = np.array([[uwb_data.x], [uwb_data.y]])
+        z = np.array([uwb_data.x, uwb_data.y])
     else:
-        z = np.array([[uwb_data.x], [uwb_data.y], [imu_data_yaw]])
-        
-    u = np.array([[vel['v']], [vel['w']]])
-    x_posterior = ekf.predict_update(z, u, dt)
-    pose['x']   = x_posterior[0,0]
-    pose['y']   = x_posterior[1,0]
-    pose['yaw'] = x_posterior[2,0]
+        z = np.array([uwb_data.x, uwb_data.y, imu_data_yaw])
+    u = np.array([vel['v'], vel['w']])
+    x_posterior = enkf.predict_update(z, u, dt)
+    pose['x']   = x_posterior[0]
+    pose['y']   = x_posterior[1]
+    pose['yaw'] = x_posterior[2]
 
     uwb_done = True
 
@@ -97,11 +98,11 @@ def subcriber_amcl_callback(amcl_data):
         allow_initialpose_pub = True
 
 def main():
-    rospy.init_node('robot_ekf_pub')
+    rospy.init_node('robot_enkf_pub')
     global odom_pub, initialpose_pub, odom_broadcaster
     global allow_initialpose_pub, vel
 
-    odom_pub = rospy.Publisher('/my_robot/odom_ekf', Odometry, queue_size=10)
+    odom_pub = rospy.Publisher('/my_robot/odom_enkf', Odometry, queue_size=10)
     initialpose_pub = rospy.Publisher('/my_robot/initialpose', PoseWithCovarianceStamped, queue_size=10)
     odom_broadcaster = tf.TransformBroadcaster()
 
@@ -143,23 +144,22 @@ def main():
         rate.sleep()
     
 if __name__ =='__main__':
+    N = 1500
     std_x = 0.15
     std_y = 0.15
     std_theta = deg2rad(1)
-    std_v = 0.03
-    std_w = 0.02
-
+    
     dim_x = 3
     dim_z = 3
-    #UWB+IMU
-    ekf = FusionEKF(dim_x=dim_x, dim_z=dim_z)
-    ekf.P = np.diag([.01, .01, .001])
-    ekf.Q = np.diag([std_v, std_w])**2
+
+    enkf = FusionEnKF(dim_x=dim_x, dim_z=dim_z, size=N)
+    enkf.P = np.diag([.01, .01, .001])
+    enkf.Q = np.diag([.01, .01, .001])**2
     if dim_z == 1:
-        ekf.R = np.diag([std_theta])**2
+        enkf.R = np.diag([std_theta])**2
     elif dim_z == 2:
-        ekf.R = np.diag([std_x, std_y])**2
+        enkf.R = np.diag([std_x, std_y])**2
     else:
-        ekf.R = np.diag([std_x, std_y, std_theta])**2
+        enkf.R = np.diag([std_x, std_y, std_theta])**2
     
     main()
