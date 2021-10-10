@@ -41,8 +41,9 @@ def subscriber_odom_callback(odom_data):
     global x_True
     x = odom_data.pose.pose.position.x
     y = odom_data.pose.pose.position.y
-    rot = odom_data.pose.pose.orientation
-    yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
+    yaw = odom_data.pose.pose.position.z
+    # rot = odom_data.pose.pose.orientation
+    # yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
     pose = np.array([[x], [y], [yaw]])
     x_True = np.hstack((x_True, pose))
   
@@ -50,8 +51,9 @@ def subscriber_odom_ekf_callback(odom_data):
     global x_EKF
     x = odom_data.pose.pose.position.x
     y = odom_data.pose.pose.position.y
-    rot = odom_data.pose.pose.orientation
-    yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
+    yaw = odom_data.pose.pose.position.z
+    # rot = odom_data.pose.pose.orientation
+    # yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
     pose = np.array([[x], [y], [yaw]])
     x_EKF = np.hstack((x_EKF, pose))
 
@@ -59,8 +61,9 @@ def subscriber_odom_enkf_callback(odom_data):
     global x_EnKF
     x = odom_data.pose.pose.position.x
     y = odom_data.pose.pose.position.y
-    rot = odom_data.pose.pose.orientation
-    yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
+    yaw = odom_data.pose.pose.position.z
+    # rot = odom_data.pose.pose.orientation
+    # yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
     pose = np.array([[x], [y], [yaw]])
     x_EnKF = np.hstack((x_EnKF, pose))
 
@@ -68,14 +71,16 @@ def subscriber_odom_ukf_callback(odom_data):
     global x_UKF
     x = odom_data.pose.pose.position.x
     y = odom_data.pose.pose.position.y
-    rot = odom_data.pose.pose.orientation
-    yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
+    yaw = odom_data.pose.pose.position.z
+    # rot = odom_data.pose.pose.orientation
+    # yaw = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
     pose = np.array([[x], [y], [yaw]])
     x_UKF = np.hstack((x_UKF, pose))
 
 def subscriber_imu_callback(imu_data):
     global th_IMU
-    th_IMU = np.hstack((th_IMU, imu_data.vector.z))
+    # th_IMU = np.hstack((th_IMU, imu_data.vector.z))
+    th_IMU = np.hstack((th_IMU, imu_data.z))
 
 def subscriber_move_callback(done_data):
     global move_done
@@ -89,7 +94,7 @@ def dead_reckoning(pose):
     pose['x']   += vel['v']*dt*cos(pose['yaw'] + 0.5*vel['w']*dt)
     pose['y']   += vel['v']*dt*sin(pose['yaw'] + 0.5*vel['w']*dt)
     pose['yaw']  += vel['w']*dt
-    pose['yaw'] = atan2(sin(pose['yaw']), cos(pose['yaw']))
+    # pose['yaw'] = atan2(sin(pose['yaw']), cos(pose['yaw']))
     arr = np.array([[pose['x'], pose['y'], pose['yaw']]]).T
     x_DR = np.hstack((x_DR, arr))
 
@@ -144,7 +149,7 @@ def plot():
     plt.title('YAW Graph')
     plt.xlabel('Sample (n)')
     plt.ylabel('Yaw (degree)')
-    plt.ylim(-200, 200)
+    # plt.ylim(-500, 0)
     plt.grid(True)
     
     plt.plot(np.rad2deg(th_IMU), '-g', linewidth = linewidth, label='yaw_IMU')
@@ -166,7 +171,8 @@ def main():
     rospy.Subscriber('/my_robot/odom_ekf', Odometry, subscriber_odom_ekf_callback)
     rospy.Subscriber('/my_robot/odom_enkf', Odometry, subscriber_odom_enkf_callback)
     rospy.Subscriber('/my_robot/odom_ukf', Odometry, subscriber_odom_ukf_callback)
-    rospy.Subscriber('/my_robot/imu/rpy/filtered', Vector3Stamped, subscriber_imu_callback)
+    # rospy.Subscriber('/my_robot/imu/rpy/filtered', Vector3Stamped, subscriber_imu_callback)
+    rospy.Subscriber('/my_robot/imu_fake', Vector3, subscriber_imu_callback)
     rospy.Subscriber('/my_robot/move_done', Bool, subscriber_move_callback)
     model = GetModelStateRequest()
     model.model_name = 'my_robot'

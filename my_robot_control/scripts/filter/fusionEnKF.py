@@ -51,7 +51,7 @@ class FusionEnKF(object):
             self.sigmas[i] += self.K @ y
 
         self.x = np.mean(self.sigmas, axis=0)
-        self.x[2] = atan2(sin(self.x[2]), cos(self.x[2]))
+        # self.x[2] = atan2(sin(self.x[2]), cos(self.x[2]))
         self.P = P - self.K @ Pz @ self.K.T
 
         return self.x
@@ -99,15 +99,15 @@ class FusionEnKF(object):
 
     def residual_x(self, a, b):
         y = a - b
-        y[2] = self.normallize_angle(y[2])
+        # y[2] = self.normallize_angle(y[2])
         return y
 
     def residual_z(self, a, b):
         y = a - b
-        if self.dim_z == 1:
-            y = self.normallize_angle(y)
-        elif self.dim_z == 3:
-            y[2] = self.normallize_angle(y[2])
+        # if self.dim_z == 1:
+        #     y = self.normallize_angle(y)
+        # elif self.dim_z == 3:
+        #     y[2] = self.normallize_angle(y[2])
         return y
 
     def normallize_angle(self, x):

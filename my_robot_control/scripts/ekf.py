@@ -84,7 +84,8 @@ def subscriber_vel_callback(vel_data):
 
 def subscriber_imu_callback(imu_data):
     global imu_data_yaw, imu_done
-    imu_data_yaw = imu_data.vector.z
+    # imu_data_yaw = imu_data.vector.z
+    imu_data_yaw = imu_data.z
     imu_done = True
 
 def subcriber_amcl_callback(amcl_data):
@@ -109,7 +110,8 @@ def main():
     get_model_srv = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
 
     rospy.Subscriber('/my_robot/cmd_vel', Twist, subscriber_vel_callback)
-    rospy.Subscriber('/my_robot/imu/rpy/filtered', Vector3Stamped, subscriber_imu_callback)
+    # rospy.Subscriber('/my_robot/imu/rpy/filtered', Vector3Stamped, subscriber_imu_callback)
+    rospy.Subscriber('/my_robot/imu_fake', Vector3, subscriber_imu_callback)
     rospy.Subscriber('/my_robot/localization_data_topic', Point, subscriber_uwb_callback)
     rospy.Subscriber('/my_robot/amcl_pose', PoseWithCovarianceStamped, subcriber_amcl_callback)
 
@@ -131,7 +133,7 @@ def main():
         vel['v'] = linear.x*cos(theta) + linear.y*sin(theta)
         vel['w'] = result.twist.angular.z
         if imu_done and uwb_done:
-            position = (pose['x'], pose['y'], 0)
+            position = (pose['x'], pose['y'], pose['yaw'])
             rotation = PyKDL.Rotation.RPY(0, 0, pose['yaw']).GetQuaternion()
             publish_odometry(position, rotation)
             # transform_odometry(position, rotation)

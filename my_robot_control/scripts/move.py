@@ -99,7 +99,7 @@ def move_num(step):
 
 def main():
     global goal_pub, vel_pub
-    rospy.init_node('robot_move', anonymous=True)
+    rospy.init_node('robot_move')
     goal_pub = rospy.Publisher('/my_robot/move_base_simple/goal', PoseStamped, queue_size=10)
     debug_pub = rospy.Publisher('/my_robot/move_done', Bool, queue_size=10)
     vel_pub = rospy.Publisher('/my_robot/cmd_vel', Twist, queue_size=10)

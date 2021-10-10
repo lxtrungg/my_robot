@@ -41,7 +41,7 @@ class FusionUKF(object):
         y = self.residual_z(z, zp)
 
         self.x = x + self.K @ y
-        self.x[2] = atan2(sin(self.x[2]), cos(self.x[2]))
+        # self.x[2] = atan2(sin(self.x[2]), cos(self.x[2]))
         self.P = P - self.K @ Pz @ self.K.T
 
         return self.x
@@ -93,43 +93,46 @@ class FusionUKF(object):
     def x_mean_fn(self, sigmas, Wm):
         n = sigmas.shape[1]
         x = np.zeros(n)
-        sum_sin = np.sum(sin(sigmas[:, 2]) @ Wm)
-        sum_cos = np.sum(cos(sigmas[:, 2]) @ Wm)
         x[0] = np.sum(sigmas[:, 0] @ Wm)
         x[1] = np.sum(sigmas[:, 1] @ Wm)
-        x[2] = atan2(sum_sin, sum_cos)
+        # sum_sin = np.sum(sin(sigmas[:, 2]) @ Wm)
+        # sum_cos = np.sum(cos(sigmas[:, 2]) @ Wm)
+        # x[2] = atan2(sum_sin, sum_cos)
+        x[2] = np.sum(sigmas[:, 2] @ Wm)
         return x
 
     def z_mean_fn(self, sigmas, Wm):
         n = sigmas.shape[1]
         z = np.zeros(n)
         if n == 1:
-            sum_sin = np.sum(sin(sigmas[:, 0]) @ Wm)
-            sum_cos = np.sum(cos(sigmas[:, 0]) @ Wm)
-            z[0] = atan2(sum_sin, sum_cos)
+            # sum_sin = np.sum(sin(sigmas[:, 0]) @ Wm)
+            # sum_cos = np.sum(cos(sigmas[:, 0]) @ Wm)
+            # z[0] = atan2(sum_sin, sum_cos)
+            z[0] = np.sum(sigmas[:, 0] @ Wm)
         elif n == 2:
             z[0] = np.sum(sigmas[:, 0] @ Wm)
             z[1] = np.sum(sigmas[:, 1] @ Wm)
         else:
             z[0] = np.sum(sigmas[:, 0] @ Wm)
             z[1] = np.sum(sigmas[:, 1] @ Wm)
-            sum_sin = np.sum(sin(sigmas[:, 2]) @ Wm)
-            sum_cos = np.sum(cos(sigmas[:, 2]) @ Wm)
-            z[2] = atan2(sum_sin, sum_cos)
+            # sum_sin = np.sum(sin(sigmas[:, 2]) @ Wm)
+            # sum_cos = np.sum(cos(sigmas[:, 2]) @ Wm)
+            # z[2] = atan2(sum_sin, sum_cos)
+            z[2] = np.sum(sigmas[:, 2] @ Wm)
 
         return z
 
     def residual_x(self, a, b):
         y = a - b
-        y[2] = self.normallize_angle(y[2])
+        # y[2] = self.normallize_angle(y[2])
         return y
 
     def residual_z(self, a, b):
         y = a - b
-        if self.dim_z == 1:
-            y = self.normallize_angle(y)
-        elif self.dim_z == 3:
-            y[2] = self.normallize_angle(y[2])
+        # if self.dim_z == 1:
+        #     y = self.normallize_angle(y)
+        # elif self.dim_z == 3:
+        #     y[2] = self.normallize_angle(y[2])
         return y
 
     def normallize_angle(self, x):

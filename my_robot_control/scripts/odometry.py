@@ -7,10 +7,13 @@ from geometry_msgs.msg import TransformStamped, Vector3, PoseWithCovarianceStamp
 from gazebo_msgs.srv import GetModelState, GetModelStateRequest
 import PyKDL
 from numpy import sin, cos, deg2rad
+from math import atan2
 
 vel = {'v': 0.0 , 'w': 0.0}
 allow_initialpose_pub = False
 pos = rot = theta = 0
+theta_fake = 0
+pre_theta = 0
 def publish_odometry(position, rotation):
     odom = Odometry()
     odom.header.stamp = rospy.Time.now()
@@ -70,6 +73,15 @@ if __name__ == '__main__':
         rot = result.pose.orientation
         linear = result.twist.linear
         theta = PyKDL.Rotation.Quaternion(rot.x, rot.y, rot.z, rot.w).GetRPY()[2]
+
+        #linear_theta
+        delta = theta - pre_theta
+        delta = atan2(sin(delta), cos(delta))
+        pre_theta = theta
+        theta_fake += delta
+        print(theta_fake)
+        pos.z = theta_fake
+
         vel['v'] = linear.x*cos(theta) + linear.y*sin(theta)
         vel['w'] = result.twist.angular.z
         publish_odometry(pos, rot)

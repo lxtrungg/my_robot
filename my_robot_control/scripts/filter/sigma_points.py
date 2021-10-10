@@ -38,7 +38,7 @@ class SigmaPoints(object):
 
     def residual(self, a, b):
         y = a - b
-        y[2] = self.normallize_angle(y[2])
+        # y[2] = self.normallize_angle(y[2])
         # y = self.normallize_angle(y)
         return y
 

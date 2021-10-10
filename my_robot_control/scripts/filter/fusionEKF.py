@@ -71,7 +71,8 @@ class FusionEKF(object):
         SI = np.linalg.inv(self.S)
         self.K = PHT @ SI
         self.x = x + self.K @ y
-        self.x[2, 0] = atan2(sin(self.x[2, 0]), cos(self.x[2, 0]))
+        # self.x[2, 0] = atan2(sin(self.x[2, 0]), cos(self.x[2, 0]))
+        
         # P = (I-KH)P(I-KH)' + KRK' is more numerically stable
         # and works for non-optimal K vs the equation
         # P = (I-KH)P usually seen in the literature.
@@ -82,10 +83,10 @@ class FusionEKF(object):
 
     def residual(self, a, b):
         y = a - b
-        if self.dim_z == 1:
-            y = self.normallize_angle(y)
-        elif self.dim_z == 3:
-            y[2, 0] = self.normallize_angle(y[2, 0])
+        # if self.dim_z == 1:
+        #     y = self.normallize_angle(y)
+        # elif self.dim_z == 3:
+        #     y[2, 0] = self.normallize_angle(y[2, 0])
         return y
 
     def normallize_angle(self, x):
