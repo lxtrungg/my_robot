@@ -162,7 +162,7 @@ def plot():
     plt.show()
 
 def main():
-    rospy.init_node('robot_debug', anonymous=True)
+    rospy.init_node('robot_debug')
     rospy.wait_for_service('/gazebo/get_model_state')
     get_model_srv = rospy.ServiceProxy('/gazebo/get_model_state', GetModelState)
     rospy.Subscriber('/my_robot/localization_data_topic', Point, subscriber_uwb_callback)
